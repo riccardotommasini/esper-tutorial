@@ -1,0 +1,85 @@
+# Event Creation
+
+create schema SmokeSensorEvent(
+sensor string,
+smoke boolean
+);
+
+create schema TemperatureSensorEvent(
+sensor string,
+temperature double
+);
+
+create schema FireEvent(
+sensor string,
+smoke boolean,
+temperature double
+);
+
+
+# Queries 
+
+## Select all Example
+
+select * from TemperatureSensorEvent
+where temperature > 50;
+
+## Aggregate Example
+
+select avg(temperature) 
+from TemperatureSensorEvent;
+
+## Logical Sliding Window Example
+
+select avg(temperature) 
+from TemperatureSensorEvent.win:time(4 sec);
+
+## Logical Tumbling Window Example
+
+select avg(temperature) 
+from TemperatureSensorEvent.win:time_batch(4 sec);
+
+
+## Physical Sliding Window Example
+
+@Name('Q1')  avg(temperature) 
+from TemperatureSensorEvent.win:length(5);
+
+
+## Physical Tumbling Window Example
+
+@Name('Q2') select avg(temperature) 
+from TemperatureSensorEvent.win:length_batch(5);
+
+
+## Output clause
+
+### Logical
+
+@Name('Q3') select avg(temperature) 
+from TemperatureSensorEvent.win:time(4 sec) 
+output snapshot every 2 sec;
+
+### Physical
+
+
+@Name('Q4') select avg(temperature) 
+from TemperatureSensorEvent.win:length(4)
+output snapshot every 2 events;
+
+## Pattern
+
+@Name('Q5')
+select a.sensor
+from pattern [every (a = SmokeSensorEvent(smoke=true) -> TemperatureSensorEvent(temperature > 50, sensor=a.sensor)
+where timer:within(2 sec))];
+
+
+
+
+
+
+
+
+
+

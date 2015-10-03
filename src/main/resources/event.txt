@@ -1,0 +1,36 @@
+# Events
+
+SmokeSensorEvent={sensor="S1", smoke=false}
+TemperatureSensorEvent={sensor='S1', temperature=30}
+t=t.plus(1 seconds)
+SmokeSensorEvent={sensor='S1', smoke=true}
+TemperatureSensorEvent={sensor='S1', temperature=40}
+t=t.plus(1 seconds)
+SmokeSensorEvent={sensor='S2', smoke=false}
+TemperatureSensorEvent={sensor='S1', temperature=55}
+t=t.plus(1 seconds)
+
+## Add when add pyhsical
+
+TemperatureSensorEvent={sensor='S1', temperature=55}
+t=t.plus(1 seconds)
+TemperatureSensorEvent={sensor='S1', temperature=55}
+t=t.plus(1 seconds)
+
+
+# Query Q.5 input 
+SmokeSensorEvent={sensor="S1", smoke=false}
+TemperatureSensorEvent={sensor='S1', temperature=30}
+t=t.plus(1 seconds)
+SmokeSensorEvent={sensor='S1', smoke=true}
+TemperatureSensorEvent={sensor='S1', temperature=40}
+t=t.plus(1 seconds)
+SmokeSensorEvent={sensor='S2', smoke=false}
+TemperatureSensorEvent={sensor='S1', temperature=55}
+t=t.plus(1 seconds)
+SmokeSensorEvent={sensor='S1', smoke=true}
+TemperatureSensorEvent={sensor='S1', temperature=55}
+t=t.plus(1 seconds)
+SmokeSensorEvent={sensor='S2', smoke=true}
+TemperatureSensorEvent={sensor='S2', temperature=55}
+t=t.plus(1 seconds)
