@@ -16,6 +16,7 @@ import com.espertech.esper.client.EPRuntime;
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPServiceProviderManager;
 import com.espertech.esper.client.EPStatement;
+import com.espertech.esper.client.time.CurrentTimeEvent;
 
 public class FireSensing {
 
@@ -34,39 +35,51 @@ public class FireSensing {
 		cepConfig.addEventType("SmokeSensorEvent", SmokeSensorEvent.class.getName());
 		cepConfig.addEventType("TemperatureSensorEvent", TemperatureSensorEvent.class.getName());
 		cepConfig.addEventType("FireEvent", SmokeSensorEvent.class.getName());
-		
+		cepConfig.getEngineDefaults().getThreading().setInternalTimerEnabled(false);
+
 		
 		EPServiceProvider cep = EPServiceProviderManager.getProvider(
 				"Web 3.0 Tutorial", cepConfig);
 
 		// Through the EP administrator API we can manage the EPL Statement registration
 		EPAdministrator cepAdm = cep.getEPAdministrator();
+
 		
-		String q1 = "select * from TemperatureSensorEvent where temperature > 50";
-		
+		String q1 = "select * from TemperatureSensorEvent.win:time(4 sec) "
+				+ " where temperature > 50 output snapshot every 2 sec";
+	
 		EPStatement s1 = cepAdm.createEPL(q1);
 		
 		s1.addListener(new SimpleListener());
 		
 		// the EP runtime API allows to send events into different streams
 		EPRuntime cepRT = cep.getEPRuntime();
-		
+		cepRT.sendEvent(new CurrentTimeEvent(0));
+
 		
 		cepRT.sendEvent(new SmokeSensorEvent("S1",false));
 		cepRT.sendEvent(new TemperatureSensorEvent("S1", 30D));
+		cepRT.sendEvent(new CurrentTimeEvent(1000));
 
 		cepRT.sendEvent(new SmokeSensorEvent("S1",true));
 		cepRT.sendEvent(new TemperatureSensorEvent("S1", 40D));
 
+		cepRT.sendEvent(new CurrentTimeEvent(2000));
+
 		cepRT.sendEvent(new SmokeSensorEvent("S2",false));
 		cepRT.sendEvent(new TemperatureSensorEvent("S1", 55D));
 
-		cepRT.sendEvent(new SmokeSensorEvent("S1",true));
-		cepRT.sendEvent(new TemperatureSensorEvent("S1", 55D));
+		cepRT.sendEvent(new CurrentTimeEvent(3000));
 
 		cepRT.sendEvent(new SmokeSensorEvent("S1",true));
 		cepRT.sendEvent(new TemperatureSensorEvent("S1", 55D));
+		cepRT.sendEvent(new CurrentTimeEvent(4000));
+
 		
+		cepRT.sendEvent(new SmokeSensorEvent("S1",true));
+		cepRT.sendEvent(new TemperatureSensorEvent("S1", 55D));
+		cepRT.sendEvent(new CurrentTimeEvent(5000));
+
 		
 	}
 
